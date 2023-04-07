@@ -1,33 +1,37 @@
-import React, {FC, useEffect} from 'react'
+import React, {FC, useEffect, useState} from 'react'
 
 export interface TimerStateType{
-    time: number
     seconds: number
     minutes: number
 }
 
 interface TimerProps{
-    setTime: React.Dispatch<React.SetStateAction<TimerStateType>>
-    time: TimerStateType
+    time: TimerStateType,
+    callback?: (time:TimerStateType) => void
 }
 
-const Timer:FC<TimerProps> = ({setTime, time}) =>{
+const Timer:FC<TimerProps> = ({time, callback}) =>{
+    const [timerState, setTimerState] = useState<TimerStateType>(time)
+
 
     useEffect(()=>{
         setTimeout(()=>{
-            if(time.time === 0) return
+            if(timerState.minutes === 0 && timerState.seconds === 0){
+                callback && callback(timerState)
+                return
+            }  
 
-            setTime({
-                time: time.time-1,
-                minutes: Math.floor((time.time - 1 ) / 60),
-                seconds: time.time - Math.floor((time.time - 1) / 60) * 60 - 1
+            setTimerState({
+                minutes: timerState.seconds === 0? timerState.minutes - 1: timerState.minutes,
+                seconds: timerState.seconds>0? timerState.seconds - 1 : 59
             })
         },1000)
-    },[time.time])
+    },[timerState])
 
     return(
         <h2>
-            {time.minutes <= 10? `0${time.minutes}`:time.minutes}:{time.seconds <= 10? `0${time.seconds}`: time.seconds}
+            {timerState.minutes < 10? `0${timerState.minutes}`:timerState.minutes}
+            :{timerState.seconds < 10? `0${timerState.seconds}`: timerState.seconds}
         </h2>
     )
 } 

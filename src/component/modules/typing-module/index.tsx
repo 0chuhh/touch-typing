@@ -22,12 +22,7 @@ const initialWords = 'hello world!hello world!hello world!hello world!';
     const [currentChar, setCurrentChar] = useState(initialWords.charAt(0));
     const [incomingChars, setIncomingChars] = useState(initialWords.substring(1));
 
-    const [timerState, setTimerState] = useState<TimerStateType>({
-        time:60,
-        minutes:5,
-        seconds:0
-    })
-
+ 
     const generate = () =>{
         return 'abcd'
     }
@@ -57,7 +52,7 @@ const initialWords = 'hello world!hello world!hello world!hello world!';
 
     return (
         <div>
-            <Timer time={timerState} setTime={setTimerState}/>
+            <Timer time={{minutes:0, seconds:10}} callback={(time)=>console.log('done')}/>
             {name} {number}
             <p className="Character">
                 <span className="Character-out">
