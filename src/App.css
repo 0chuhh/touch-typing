@@ -1,0 +1,25 @@
+html,body{
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+.App, #root{
+  background: rgb(121, 46, 46);
+  height:100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Character {
+  white-space: pre;
+}
+
+.Character-current {
+  background-color: #09d3ac;
+}
+
+.Character-out {
+  color: silver;
+}
