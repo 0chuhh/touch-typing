@@ -6,7 +6,7 @@ const useKeyPress = (callback: (key:string)=>void, targetKey?:string) => {
     const [keyPressed, setKeyPressed] = useState<string | null>();
     // If pressed key is our target key then set to true
     function downHandler({ key }:{key:string}): void {
-        if (keyPressed !== key && key.length === 1) {
+        if (keyPressed !== key) {
             setKeyPressed(key);
             callback && callback(key);
           }
@@ -24,7 +24,7 @@ const useKeyPress = (callback: (key:string)=>void, targetKey?:string) => {
         window.removeEventListener("keydown", downHandler);
         window.removeEventListener("keyup", upHandler);
       };
-    }); // Empty array ensures that effect is only run on mount and unmount
+    },[callback]); // Empty array ensures that effect is only run on mount and unmount
     return keyPressed;
   }
 

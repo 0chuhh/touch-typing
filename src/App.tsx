@@ -7,7 +7,7 @@ import TypingModule from 'component/modules/typing-module';
 function App() {
   return (
     <div className="App">
-      <TypingModule class={{name:'urok', number:1}} text={''} maxTime={0}/>
+      <TypingModule classNum={2} className='урок' text={'ввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввввв'} maxTime={0}/>
     </div>
   );
 }
