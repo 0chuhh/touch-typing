@@ -6,7 +6,7 @@ export interface TimerStateType {
 }
 
 interface TimerProps {
-    time: TimerStateType,
+    time: TimerStateType | 0, // 0 means no time limit, timer will not appear 
     onChange?: (time: TimerStateType) => void
     callback?: () => void
 }
@@ -14,17 +14,18 @@ interface TimerProps {
 type TimerHandle = {
     startTimer: () => void,
     stopTimer:()=> void,
+    resetTimer:()=> void,
     isTimerStarted:boolean
   }
 
 const Timer = forwardRef<TimerHandle, TimerProps>(({ time, onChange, callback, }, ref) => {
-    const [timerState, setTimerState] = useState<TimerStateType>(time)
+    const [timerState, setTimerState] = useState<TimerStateType | 0>(time)
 
     const [isTimerStarted, setIsTimerStarted] = useState<boolean>(false);
 
 
     useEffect(() => {
-        if (isTimerStarted) {
+        if (isTimerStarted && timerState) {
             setTimeout(() => {
                 if (timerState.minutes === 0 && timerState.seconds === 0) {
                     callback && callback()
@@ -43,21 +44,24 @@ const Timer = forwardRef<TimerHandle, TimerProps>(({ time, onChange, callback, }
     // use ref to start and stop the timer
 
     useImperativeHandle(ref, () => ({
-
         startTimer() {
             setIsTimerStarted(true)
         },
         stopTimer() {
             setIsTimerStarted(false)
         },
+        resetTimer() {
+            this.stopTimer()
+            setTimerState(time)
+        },
         isTimerStarted
     }));
 
-
+    if(!timerState) return null
     return (
         <h2>
-            {timerState.minutes < 10 ? `0${timerState.minutes}` : timerState.minutes}
-            :{timerState.seconds < 10 ? `0${timerState.seconds}` : timerState.seconds}
+            {timerState.minutes.toString().padStart(2,'0')}
+            :{timerState.seconds.toString().padStart(2,'0')}
         </h2>
     )
 })

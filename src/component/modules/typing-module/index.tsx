@@ -1,4 +1,4 @@
-import React, { useState, FC, useRef, ElementRef } from 'react';
+import React, { useState, FC, useRef, ElementRef, useEffect } from 'react';
 import useKeyPress from 'hooks/useKeyPress';
 import Timer, { TimerStateType } from 'component/ui/timer/Timer';
 import Modal from 'component/ui/modal/Modal';
@@ -10,10 +10,10 @@ interface TypingModuleProps {
     classNum: number
     className: string
     text: string
-    maxTime: number
+    maxTime?: { minutes: number, seconds: number } | 0 // 0 means no time limit, timer will not appear 
     repeat?: boolean
 }
-const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'урок', text = 'Hello world!', repeat = true }) => {
+const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'урок', text = 'Hello world!', maxTime = 0, repeat = true }) => {
     type TimerHandle = ElementRef<typeof Timer>
     const timerRef = useRef<TimerHandle>(null)
     const [leftPadding, setLeftPadding] = useState(
@@ -24,22 +24,26 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
     const [incomingChars, setIncomingChars] = useState<string>(text.substring(1))
 
     const [isTextShowed, setIsTextShowed] = useState<boolean>(false)
-    const [isModalResultOpen, setSIsModalResultOpen] = useState<boolean>(false)
+    const [isModalResultOpen, setIsModalResultOpen] = useState<boolean>(false)
 
-    const [startTime, setStartTime] = useState<number>(0)
     const [charCount, setCharCount] = useState<number>(0)
     const [wrongCharCount, setWrongCharCount] = useState<number>(0)
-    const [charPerMin, setcharPerMin] = useState<number>(0)
 
+    const [charPerMin, setcharPerMin] = useState<number>(0)
+    const [spentTime, setSpentTime] = useState<string>('00:00')
+    const [spentSeconds, setSpentSeconds] = useState<number>(0)
+    const [accuracy, setAccuracy] = useState<number>(0)
+
+    const [datasets, setDatasets] = useState<{ charsPerMin: number[], accuracy: number[], seconds: number[] }>({ charsPerMin: [], accuracy: [], seconds: [] })
+
+    const [isTimesUp, setIsTimesUp] = useState<boolean>(false)
 
     const OnKeysPressed = () => {
         let updatedOutgoingChars = outgoingChars;
         let updatedIncomingChars = incomingChars;
 
-        if (!startTime) {
-            setStartTime(currentTime());
-        }
-        const durationInMinutes = (currentTime() - startTime) / 60000.0;
+
+
         if (leftPadding.length > 0) {
             setLeftPadding(leftPadding.substring(1));
         }
@@ -47,62 +51,127 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
         setOutgoingChars(updatedOutgoingChars);
         setCurrentChar(incomingChars.charAt(0));
         updatedIncomingChars = incomingChars.substring(1);
-        if (updatedIncomingChars.split(' ').length < 10) {
-            // updatedIncomingChars += ' ' + generate();
+        if (repeat && updatedIncomingChars.split(' ').length < 10) {
+            updatedIncomingChars += ' ' + text;
         }
         setIncomingChars(updatedIncomingChars);
 
         setCharCount(prev => prev + 1)
-        setcharPerMin(Number.parseFloat(((charCount + 1) / durationInMinutes).toFixed(2)));
+    }
 
+    const toogleResultModal = () => {
+        setIsModalResultOpen(prev => !prev)
+        if (timerRef.current?.isTimerStarted) {
+            timerRef.current?.stopTimer()
+            changeSpentTime()
+        }
     }
 
     useKeyPress(key => {
         switch (key) {
             case 'Enter':
-                if (!timerRef.current?.isTimerStarted) {
+                if (!timerRef.current?.isTimerStarted && !isModalResultOpen) {
                     timerRef.current?.startTimer()
                     setIsTextShowed(true)
                 }
                 break;
             case 'Escape':
-                setSIsModalResultOpen(prev => !prev)
-                if(timerRef.current?.isTimerStarted){
-                    timerRef.current?.stopTimer()
-                }
+                toogleResultModal()
                 break;
             default:
-                if (key === currentChar) {
-                    OnKeysPressed()
-                }else{
-                    setWrongCharCount(prev=>prev+1)
+                if (isTextShowed && !isModalResultOpen) {
+                    if (key === currentChar) {
+                        if (!timerRef.current?.isTimerStarted && !isModalResultOpen) {
+                            timerRef.current?.startTimer()
+                        }
+                        OnKeysPressed()
+                    } else {
+                        setWrongCharCount(prev => prev + 1)
+                    }
                 }
                 break;
         }
     });
 
+    const changeSpentTime = () => {
+        setSpentTime(`${(Math.floor(spentSeconds / 60)).toString().padStart(2, '0')}:${((spentSeconds + 1) % 60).toString().padStart(2, '0')}`)
+    }
+
+
+    const onTimerChange = (minutes: number, seconds: number) => {
+        setSpentSeconds(prev => prev + 1)
+        setDatasets(prev => ({
+            charsPerMin: [...prev.charsPerMin, charPerMin],
+            accuracy: [...prev.accuracy, accuracy !== 0 ? 100 - accuracy : 0],
+            seconds: [...prev.seconds, spentSeconds + 1]
+        }))
+
+    }
+
+    const changeAccuracy = () => {
+        if (charCount || wrongCharCount) {
+            let newAccuracy = Math.floor((charCount * 100) / (charCount + wrongCharCount))
+            setAccuracy(newAccuracy)
+
+        }
+    }
+
+
+    const resetLesson = () => {
+        timerRef.current?.resetTimer()
+        setIncomingChars(text.substring(1))
+        setCurrentChar(text.charAt(0))
+        setOutgoingChars('')
+        setAccuracy(0)
+        setCharCount(0)
+        setIsTextShowed(false)
+        setWrongCharCount(0)
+        setDatasets({ charsPerMin: [], accuracy: [], seconds: [] })
+        setSpentTime('00:00')
+        setSpentSeconds(0)
+        toogleResultModal()
+        setIsTimesUp(false)
+    } 
+
+    useEffect(() => {
+        let newCharPerMin = Number.parseInt(((charCount) / ((spentSeconds + 1) / 60)).toFixed(2))
+        changeAccuracy()
+        setcharPerMin(newCharPerMin);
+    }, [charCount, wrongCharCount])
 
     return (
-        <div>
+        <div className='module-container'>
             {charCount}
             <Modal open={isModalResultOpen}>
-                <ResultForm time={{minutes:10, seconds:43}} charCount={charCount} charPerMin={charPerMin} accuracy={Math.floor((charCount*100)/(charCount+wrongCharCount))}/>
+                <ResultForm
+                    time={spentTime}
+                    charCount={charCount}
+                    charPerMin={charPerMin}
+                    accuracy={accuracy}
+                    datasets={datasets}
+                    showContinueButton={!isTimesUp}
+                    onContinueClick={toogleResultModal}
+                    onResetClick={resetLesson}
+                />
             </Modal>
 
-            <Timer ref={timerRef} time={{ minutes: 1, seconds: 10 }} callback={() => console.log('done')} />
+            <Timer onChange={(time) => onTimerChange(time.minutes, time.seconds)} ref={timerRef} time={maxTime} callback={()=>{
+                toogleResultModal()
+                setIsTimesUp(true)
+            }} />
             {classNum} {className}
             {
                 isTextShowed ?
-                    <p className="Character">
+                    <p className="lesson-text-field">
                         <span className="Character-out">
                             {(leftPadding + outgoingChars).slice(-20)}
                         </span>
                         <span className="Character-current">{currentChar}</span>
-                        <span>{incomingChars}</span>
+                        <span>{incomingChars.substring(0, 20)}</span>
                     </p>
                     :
                     <div>
-                        type enter to start
+                        Нажмите Enter Чтобы начать
                     </div>
             }
         </div>
