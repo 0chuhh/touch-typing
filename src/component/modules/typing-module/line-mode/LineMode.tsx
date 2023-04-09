@@ -12,7 +12,7 @@ const LineMode: FC<LineModeProps> = ({ leftPadding, outgoingChars, currentChar, 
                 {(leftPadding + outgoingChars).slice(-20)}
             </span>
             <span className="Character-current">{currentChar}</span>
-            <span>{incomingChars.substring(0, 20)}</span>
+            <span>{incomingChars.substring(0, 50)}</span>
         </p>
     )
 }
