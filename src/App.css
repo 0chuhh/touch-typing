@@ -5,7 +5,12 @@ body {
   height: 100%;
 }
 
-h1,h2,h3,h4,h5,h6{
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 0;
 }
 
@@ -19,7 +24,7 @@ h1,h2,h3,h4,h5,h6{
   justify-content: center;
 }
 
-.module-container{
+.module-container {
   width: 100%;
   padding: 20px;
 }
@@ -27,69 +32,93 @@ h1,h2,h3,h4,h5,h6{
 .lesson-text-field {
   width: 100%;
   border-radius: 0.2em;
-  font: normal 3.5vw Courier New,Fallback Courier New,monospace,serif;
+  font: normal 1.7vw Courier New, Fallback Courier New, monospace, serif;
   background: lightgray;
+  margin: 10px 0;
 }
 
-.line-mode{
+@media (max-width:992px) {
+  .lesson-text-field {
+    
+    font-size: 2.2vw;
+    
+  }
+}
+
+.line-mode {
   white-space: pre;
   overflow: hidden;
   height: 5%;
 }
-.block-mode{
+
+.block-mode {
   overflow-y: auto;
-  max-height: 400px;
+  overflow-x: hidden;
+  max-height: 230px;
   text-align: justify;
   display: flex;
+  padding: 10px;
   flex-wrap: wrap;
   justify-content: space-between;
 }
+
 .block-mode::-webkit-scrollbar {
   width: 10px;
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 }
+
 .block-mode::-webkit-scrollbar-track {
   border-radius: 10px;
 
-  background-color: rgb(163, 163, 163);;
+  background-color: rgb(163, 163, 163);
+  ;
 }
+
 .block-mode::-webkit-scrollbar-thumb {
   background-color: #19ad98;
   border-radius: 10px;
 }
+
 .Character-current {
   position: relative;
 }
-.current-word{
+
+.current-word {
   background-color: #575757;
 }
-.word{
+
+.word {
   display: flex;
   flex-wrap: nowrap;
   padding: 0 10px;
 }
+
 @keyframes blink {
-  0%{
+  0% {
     opacity: 1;
   }
-  50%{
+
+  50% {
     opacity: 0;
   }
-  100%{
+
+  100% {
     opacity: 1;
   }
 }
-.Character-current:after{
+
+.Character-current:after {
   content: '';
   position: absolute;
   width: 3px;
   height: 100%;
-  top:0;
-  left:0;
+  top: 0;
+  left: 0;
   z-index: 0;
-  animation: blink 1.2s ease  infinite;
+  animation: blink 1.2s ease infinite;
   background-color: #d30909;
 }
+
 .Character-out {
   padding-left: 5px;
   background-color: #b4b4b4;
@@ -121,7 +150,6 @@ h1,h2,h3,h4,h5,h6{
 .result-form {
   width: 100%;
   max-width: 800px;
-  max-height: 40%;
   padding: 20px;
   background: #fff;
   border-radius: 10px;
@@ -141,7 +169,7 @@ h1,h2,h3,h4,h5,h6{
   padding: 0px 25px 0px 0px;
 }
 
-.stat div{
+.stat div {
   margin: 5px 0 0 5px;
 }
 
@@ -151,14 +179,14 @@ h1,h2,h3,h4,h5,h6{
   line-height: 1;
 }
 
-.control-panel{
+.control-panel {
   display: flex;
   justify-content: end;
   align-items: center;
   gap: 5px;
 }
 
-button{
+button {
   cursor: pointer;
   padding: 10px;
   background: #19ad98;
@@ -167,6 +195,73 @@ button{
   border-width: 0;
 }
 
-button ~ .second-btn{
+button~.second-btn {
   background: #d30909;
 }
+
+.keyboard {
+  width: max-content;
+  padding: 9px;
+  background: #19ad98;
+  height: max-content;
+}
+
+.keyboard .keyboard-row {
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.keyboard-item {
+  border: 1px solid #4d5a68;
+  border-radius: 4px;
+  color: #000;
+  font-size: 12px;
+  height: 33px;
+  margin: 1px;
+  line-height: 2.5;
+  text-align: center;
+  text-align: center;
+  min-width: 40px;
+  padding: 2px;
+  background-color: #fff;
+}
+
+.green-zone {
+  background-color: #8BCE79;
+}
+
+.yellow-zone {
+  background-color: #ECD768;
+}
+
+.red-zone {
+  background-color: #FBB1B1;
+}
+
+.purpule-zone {
+  background-color: #D3C7E2;
+}
+
+.blue-zone {
+  background-color: #9AB5D6;
+}
+
+.orange-zone {
+  background-color: #F3C9AD;
+}
+
+.current-key {
+  background-color: red;
+  color: #fff;
+}
+
+.keyboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: space-between;
+  margin-top: 20px
+}
+
