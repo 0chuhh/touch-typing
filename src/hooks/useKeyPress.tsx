@@ -5,10 +5,14 @@ const useKeyPress = (callback: (key:string)=>void, targetKey?:string) => {
     // State for keeping track of whether key is pressed
     const [keyPressed, setKeyPressed] = useState<string | null>();
     // If pressed key is our target key then set to true
-    function downHandler({ key }:{key:string}): void {
-        if (keyPressed !== key) {
-            setKeyPressed(key);
-            callback && callback(key);
+    function downHandler(event:any): void {
+        if (keyPressed !== event.key) {
+            setKeyPressed(event.key);
+            callback && callback(event.key);
+            
+          }
+          if(event.key === 'Space'){
+            event.preventDefault();
           }
     }
     // If released key is our target key then set to false
