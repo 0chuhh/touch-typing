@@ -6,6 +6,8 @@ import { currentTime } from 'utils/Time';
 import ResultForm from '../result-form/ResultForm';
 import LineMode from './line-mode/LineMode';
 import BlockMode from './block-mode/BlockMode';
+import Keyboard from 'component/modules/keyboard/Keyboard';
+import Hands from '../hands/Hands';
 
 
 interface TypingModuleProps {
@@ -14,8 +16,9 @@ interface TypingModuleProps {
     text: string
     maxTime?: { minutes: number, seconds: number } | 0 // 0 means no time limit, timer will not appear 
     repeat?: boolean
+    callback?: (dataset: { charsPerMin: number, charsCount: number, mistakesCount: number, mistakes: string[] }) => void  // do smth with accumulated data
 }
-const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'урок', text = 'Hello world!', maxTime = 0, repeat = true }) => {
+const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'урок', text = 'Hello world!', maxTime = 0, repeat = true, callback }) => {
     type TimerHandle = ElementRef<typeof Timer>
     const timerRef = useRef<TimerHandle>(null)
     const [leftPadding, setLeftPadding] = useState<string>(
@@ -39,6 +42,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
     const [spentTime, setSpentTime] = useState<string>('00:00')
     const [spentSeconds, setSpentSeconds] = useState<number>(0)
     const [accuracy, setAccuracy] = useState<number>(0)
+    const [mistakes, setMistakes] = useState<string[]>([])
 
     const [datasets, setDatasets] = useState<{ charsPerMin: number[], accuracy: number[], seconds: number[] }>({ charsPerMin: [], accuracy: [], seconds: [] })
 
@@ -71,6 +75,9 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
         if (repeat && updatedIncomingChars.split(' ').length < 10) {
             updatedIncomingChars += ' ' + text;
         }
+        if (!repeat && incomingChars.length === 0) {
+            endLesson()
+        }
         setIncomingChars(updatedIncomingChars);
 
         setCharCount(prev => prev + 1)
@@ -97,7 +104,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
                 toogleResultModal()
                 break;
             default:
-                if (isTextShowed && !isModalResultOpen) {
+                if (isTextShowed && !isModalResultOpen && key.length === 1) {
                     if (key === currentChar) {
                         if (!timerRef.current?.isTimerStarted && !isModalResultOpen) {
                             timerRef.current?.startTimer()
@@ -105,6 +112,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
                         OnKeysPressedLineMode(key)
                     } else {
                         setWrongCharCount(prev => prev + 1)
+                        setMistakes(prev => [...prev, key])
                     }
                 }
                 break;
@@ -128,7 +136,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
 
     const changeAccuracy = () => {
         if (charCount || wrongCharCount) {
-            let newAccuracy = Math.floor((charCount * 100) / (charCount + wrongCharCount))
+            let newAccuracy = Math.floor((charCount / (charCount + wrongCharCount)) * 100)
             setAccuracy(newAccuracy)
 
         }
@@ -153,15 +161,28 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
         setCurrentCharIndex(0)
     }
 
+    const endLesson = () => {
+        toogleResultModal()
+        setIsTimesUp(true)
+        let data = {
+            charsPerMin: charPerMin,
+            charsCount: charCount + 1,
+            mistakesCount: wrongCharCount,
+            mistakes: mistakes
+        }
+        callback && callback(data)
+    }
+
     useEffect(() => {
         let newCharPerMin = Number.parseInt(((charCount) / ((spentSeconds + 1) / 60)).toFixed(2))
         changeAccuracy()
         setcharPerMin(newCharPerMin);
     }, [charCount, wrongCharCount])
 
+
+
     return (
         <div className='module-container'>
-            {charCount}
             <Modal open={isModalResultOpen}>
                 <ResultForm
                     time={spentTime}
@@ -175,17 +196,20 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
                 />
             </Modal>
 
-            <Timer onChange={(time) => onTimerChange(time.minutes, time.seconds)} ref={timerRef} time={maxTime} callback={() => {
-                toogleResultModal()
-                setIsTimesUp(true)
-            }} />
-            {classNum} {className}
-            <div style={{display:'flex', alignItems:'center', gap:'10px'}}>
-            <button tabIndex={-1} onKeyDown={e=>{if(e.key===' ')e.preventDefault()}} onClick={() => {
-                setMode(prev => prev === 'line' ? 'block' : 'line')
-                blockRef.current?.querySelector('.current-word')?.scrollIntoView({ behavior: 'smooth' })
-            }}>mode</button>
-            <div>{mode === 'line'? 'Срока': 'Блок'}</div>
+
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', color: '#fff' }}>
+                <div>{classNum} {className}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span>Осталось времени</span>
+                    <Timer onChange={(time) => onTimerChange(time.minutes, time.seconds)} ref={timerRef} time={maxTime} callback={endLesson} />
+
+
+                    <button tabIndex={-1} onKeyDown={e => { if (e.key === ' ') e.preventDefault() }} onClick={() => {
+                        setMode(prev => prev === 'line' ? 'block' : 'line')
+                        blockRef.current?.querySelector('.current-word')?.scrollIntoView({ behavior: 'smooth' })
+                    }}>режим</button>
+                    <div>{mode === 'line' ? 'Строка' : 'Блок'}</div>
+                </div>
             </div>
             {
                 isTextShowed ?
@@ -207,10 +231,15 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
                             text={text}
                         />
                     :
-                    <div>
+                    <div className='lesson-text-field'>
                         Нажмите Enter Чтобы начать
                     </div>
             }
+            <div className="keyboard-container">
+
+                <Keyboard currentKey={isTextShowed ? currentChar : ''} />
+                <Hands currentKey={isTextShowed ? currentChar : ''}/>
+            </div>
         </div>
     )
 }
