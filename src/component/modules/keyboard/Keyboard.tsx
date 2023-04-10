@@ -23,19 +23,19 @@ const Keyboard: FC<KeyboardProps> = ({ currentKey }) => {
                             row.map((key, index) => {
                                 switch (key) {
                                     case 'Backspace':
-                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone" style={{ width: '80px' }}>{key}</KeyboardItem>
+                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="right-green-zone" style={{ width: '80px' }}>{key}</KeyboardItem>
                                     case '\\':
-                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone" style={{ width: '65px' }}>{key}</KeyboardItem>
+                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="right-green-zone" style={{ width: '65px' }}>{key}</KeyboardItem>
                                     case 'Tab':
-                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone" style={{ width: '65px' }}>{key}</KeyboardItem>
+                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="left-green-zone" style={{ width: '65px' }}>{key}</KeyboardItem>
                                     case 'Enter':
-                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone" style={{ width: '90px' }}>{key}</KeyboardItem>
+                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="right-green-zone" style={{ width: '90px' }}>{key}</KeyboardItem>
                                     case 'Caps Lock':
-                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone" style={{ width: '80px' }}>{key}</KeyboardItem>
+                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="left-green-zone" style={{ width: '80px' }}>{key}</KeyboardItem>
                                     case 'Shift ':
-                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={currentKey === currentKey?.toUpperCase() && currentKey !== ' ' && currentKey !== ''} className="green-zone" style={{ width: '110px' }}>{key}</KeyboardItem>
+                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={currentKey === currentKey?.toUpperCase() && currentKey !== ' ' && currentKey !== ''} className="left-green-zone" style={{ width: '110px' }}>{key}</KeyboardItem>
                                     case ' Shift':
-                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone" style={{ width: '110px' }}>{key}</KeyboardItem>
+                                        return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="right-green-zone" style={{ width: '110px' }}>{key}</KeyboardItem>
                                     case ' Ctrl':
                                     case 'Ctrl ':
                                     case 'Cmd':
@@ -49,13 +49,15 @@ const Keyboard: FC<KeyboardProps> = ({ currentKey }) => {
                                         switch (index) {
                                             case 0:
                                             case 1:
-                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone">{key}</KeyboardItem>
+                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="left-green-zone">{key}</KeyboardItem>
                                             case 2:
+                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="left-yellow-zone">{key}</KeyboardItem>
                                             case 8:
-                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="yellow-zone">{key}</KeyboardItem>
+                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="right-yellow-zone">{key}</KeyboardItem>
                                             case 3:
+                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="left-red-zone">{key}</KeyboardItem>
                                             case 9:
-                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="red-zone">{key}</KeyboardItem>
+                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="right-red-zone">{key}</KeyboardItem>
                                             case 4:
                                             case 5:
                                                 return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="purpule-zone">{key}</KeyboardItem>
@@ -66,7 +68,7 @@ const Keyboard: FC<KeyboardProps> = ({ currentKey }) => {
                                             case 11:
                                             case 12:
                                             case 13:
-                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="green-zone">{key}</KeyboardItem>
+                                                return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="right-green-zone">{key}</KeyboardItem>
 
                                             default:
                                                 return <KeyboardItem key={'key'+(index*rowIndex)+index} current={key.toLowerCase() === currentKey?.toLowerCase()} className="red-zone">{key}</KeyboardItem>
