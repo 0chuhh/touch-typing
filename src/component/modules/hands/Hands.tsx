@@ -8,7 +8,7 @@ interface HandsProps {
 const Hands: FC<HandsProps> = ({ currentKey }) => {
     const [leftDotPosition, setLeftDotPosition] = useState<{ top: string, left: string } | undefined>(undefined)
     const [rightDotPosition, setRightDotPosition] = useState<{ top: string, left: string } | undefined>(undefined)
-
+    
     useEffect(() => {
         if (currentKey) {
             let currentZoneColor = document.querySelector('.current-key')?.classList[2]
@@ -49,6 +49,14 @@ const Hands: FC<HandsProps> = ({ currentKey }) => {
                 default:
                     setLeftDotPosition(undefined)
                     setRightDotPosition(undefined)
+            }
+
+            if(currentKey === currentKey.toLocaleUpperCase()){
+                if(currentZoneColor?.split('-')[0] === 'left' || currentZoneColor?.split('-')[0] === 'purpule'){
+                    setRightDotPosition({ top: '90px', left: '153px' })
+                }else{
+                    setLeftDotPosition({ top: '90px', left: '38px' })
+                }
             }
 
         }
