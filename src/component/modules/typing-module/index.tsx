@@ -237,7 +237,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
             }
             <div className="keyboard-container">
 
-                <Keyboard currentKey={isTextShowed ? currentChar : ''} />
+                <Keyboard lang='en-US' currentKey={isTextShowed ? currentChar : ''} />
                 <Hands currentKey={isTextShowed ? currentChar : ''}/>
             </div>
         </div>
