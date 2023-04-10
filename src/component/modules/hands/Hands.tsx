@@ -46,6 +46,9 @@ const Hands: FC<HandsProps> = ({ currentKey }) => {
                     setRightDotPosition({ top: '90px', left: '66px' })
                     setLeftDotPosition(undefined)
                     break;
+                default:
+                    setLeftDotPosition(undefined)
+                    setRightDotPosition(undefined)
             }
 
         }
