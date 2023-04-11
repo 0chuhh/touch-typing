@@ -1,6 +1,7 @@
 import { FC, useEffect, useState } from "react"
 import leftHand from 'assets/left-hand.svg'
 import rightHand from 'assets/right-hand.svg'
+import { useAppSelector } from "hooks/redux"
 
 interface HandsProps {
     currentKey?: string
@@ -8,10 +9,11 @@ interface HandsProps {
 const Hands: FC<HandsProps> = ({ currentKey }) => {
     const [leftDotPosition, setLeftDotPosition] = useState<{ top: string, left: string } | undefined>(undefined)
     const [rightDotPosition, setRightDotPosition] = useState<{ top: string, left: string } | undefined>(undefined)
+    const {currentKeyZone, leftShift, rightShift} = useAppSelector(state=>state.keyboardReducer)
     
     useEffect(() => {
         if (currentKey) {
-            let currentZoneColor = document.querySelector('.current-key')?.classList[2]
+            let currentZoneColor = currentKeyZone
 
             switch(currentZoneColor){
                 case 'left-green-zone':
@@ -46,21 +48,25 @@ const Hands: FC<HandsProps> = ({ currentKey }) => {
                     setRightDotPosition({ top: '90px', left: '66px' })
                     setLeftDotPosition(undefined)
                     break;
+                case 'orange-zone':
+                    setLeftDotPosition({top:'140px', left:'153px'})
+                    setRightDotPosition(undefined)
+                    break;
                 default:
                     setLeftDotPosition(undefined)
                     setRightDotPosition(undefined)
             }
 
             if(currentKey === currentKey.toLocaleUpperCase()){
-                if(currentZoneColor?.split('-')[0] === 'left' || currentZoneColor?.split('-')[0] === 'purpule'){
+                if(rightShift){
                     setRightDotPosition({ top: '90px', left: '153px' })
-                }else{
+                }else if(leftShift){
                     setLeftDotPosition({ top: '90px', left: '38px' })
                 }
             }
 
         }
-    }, [currentKey])
+    }, [currentKeyZone, leftShift, rightShift])
     return (
         <div className="hands-container">
             <div className="hand" style={{

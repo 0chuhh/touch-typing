@@ -50,7 +50,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
 
     const blockRef = useRef<HTMLParagraphElement | null>(null);
 
-    const OnKeysPressedLineMode = (key: string) => {
+    const OnKeysPressedKey = (key: string) => {
         let updatedOutgoingChars = outgoingChars;
         let updatedIncomingChars = incomingChars;
 
@@ -109,7 +109,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
                         if (!timerRef.current?.isTimerStarted && !isModalResultOpen) {
                             timerRef.current?.startTimer()
                         }
-                        OnKeysPressedLineMode(key)
+                        OnKeysPressedKey(key)
                     } else {
                         setWrongCharCount(prev => prev + 1)
                         setMistakes(prev => [...prev, key])
@@ -236,8 +236,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
                     </div>
             }
             <div className="keyboard-container">
-
-                <Keyboard lang='en-US' currentKey={isTextShowed ? currentChar : ''} />
+                <Keyboard language='en-US' currentKey={isTextShowed ? currentChar : ''} />
                 <Hands currentKey={isTextShowed ? currentChar : ''}/>
             </div>
         </div>
