@@ -8,6 +8,7 @@ import LineMode from './line-mode/LineMode';
 import BlockMode from './block-mode/BlockMode';
 import Keyboard from 'component/modules/keyboard/Keyboard';
 import Hands from '../hands/Hands';
+import { languageType } from 'types/language';
 
 
 interface TypingModuleProps {
@@ -16,9 +17,10 @@ interface TypingModuleProps {
     text: string
     maxTime?: { minutes: number, seconds: number } | 0 // 0 means no time limit, timer will not appear 
     repeat?: boolean
+    language?: languageType
     callback?: (dataset: { charsPerMin: number, charsCount: number, mistakesCount: number, mistakes: string[] }) => void  // do smth with accumulated data
 }
-const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'урок', text = 'Hello world!', maxTime = 0, repeat = true, callback }) => {
+const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'урок', text = 'Hello world!', maxTime = 0, repeat = true, language= 'ru-RU', callback }) => {
     type TimerHandle = ElementRef<typeof Timer>
     const timerRef = useRef<TimerHandle>(null)
     const [leftPadding, setLeftPadding] = useState<string>(
@@ -236,7 +238,7 @@ const TypingModule: FC<TypingModuleProps> = ({ classNum = 1, className = 'уро
                     </div>
             }
             <div className="keyboard-container">
-                <Keyboard language='en-US' currentKey={isTextShowed ? currentChar : ''} />
+                <Keyboard language={language} currentKey={isTextShowed ? currentChar : ''} />
                 <Hands currentKey={isTextShowed ? currentChar : ''}/>
             </div>
         </div>
