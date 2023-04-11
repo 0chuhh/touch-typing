@@ -25,6 +25,9 @@ const Keyboard:FC<KeyboardProps> = ({ currentKey, language = 'ru-RU' }) => {
 
 
     useLayoutEffect(() => {
+        
+        if (currentKey && currentKey !== ' ') checkLanguage(currentKey)
+
         dispatch(keyboardSlice.actions.resetCurrentKeyZone())
 
     }, [currentKey])
@@ -32,11 +35,9 @@ const Keyboard:FC<KeyboardProps> = ({ currentKey, language = 'ru-RU' }) => {
     useEffect(() => {
 
         if (currentKey) {
-            if (currentKey !== ' ') checkLanguage(currentKey)
 
             if (currentKey === currentKey?.toUpperCase() && currentKey !== ' ' && currentKey !== '') {
                 let currentZoneColor = keyboard.currentKeyZone.split('-')[0]
-                console.log(currentZoneColor)
                 switch (currentZoneColor) {
                     case 'left':
                     case 'purpule':
